@@ -157,3 +157,21 @@ graph LR
     B -->|Logging| J[TRAFFIC_LOG]
     B -->|Enforcement| K[WHITELIST_IPS]
 ```
+###  Parcours détaillé d'un paquet réseau à travers le système IPS
+```mermaid
+graph TD
+    A[Paquet Capturé] --> B{Étape 1: Whitelist Check}
+    B -->|IP Whitelistée| C[Paquet Ignoré]
+    B -->|IP Non Whitelistée| D{Étape 2: Analyse TCP/IP}
+    D --> E[Détection Scan Ports]
+    D --> F[Analyse HTTP]
+    D --> G[Extraction Features ML]
+    E -->|Port Scan Détecté| H[+0.4 Score]
+    F -->|SQLi Détecté| I[+0.7 Score]
+    F -->|Bruteforce Détecté| J[+2.0 Score]
+    G --> K{Anomalie ML?}
+    K -->|MSE Élevé| L[+0.6 Score]
+    H & I & J & L --> M{Étape 3: Scoring Final}
+    M -->|Score >= 2.0| N[Blocage IP]
+    M -->|Score < 2.0| O[Surveillance Continue]
+```
